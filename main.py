@@ -1,7 +1,7 @@
 import sys
 import argparse
 from agents import RandomAgent, HumanAgent, MinimaxAgent, MinimaxHeuristicAgent, \
-                    MinimaxPruneAgent, OtherMinimaxHeuristicAgent
+                    MinimaxPruneAgent
 import test_boards
 
 
@@ -115,10 +115,21 @@ class GameState:
         p2_score = 0
         for run in self.get_rows() + self.get_cols() + self.get_diags():
             for elt, length in streaks(run):
-                if (elt == 1) and (length >= 3):
-                    p1_score += length**2
-                elif (elt == -1) and (length >= 3):
-                    p2_score += length**2
+                if (elt == 1):
+                    if (length == 2):
+                        p1_score += 5
+                    elif (length == 3):
+                        p1_score += 25
+                    elif (length == 4):
+                        p1_score += 300
+                else: # elt = -1
+                    if (length == 2):
+                        p2_score += 5
+                    elif (length == 3):
+                        p2_score += 25
+                    elif (length == 4):
+                        p2_score += 300
+                    
         return p1_score, p2_score
 
     def utility(self):
@@ -171,8 +182,9 @@ def play_game(player1, player2, state):
 
     turn = 0
     p1_state_count, p2_state_count = 0, 0
+    run = True
 
-    while not state.is_full():
+    while run:
         player = player1 if state.next_player() == 1 else player2
 
         state_count_before = GameState.state_count
@@ -193,6 +205,8 @@ def play_game(player1, player2, state):
 
         turn += 1
         state = state_next
+        if state.is_full():
+            run = False
 
     score1, score2 = state.scores()
     if score1 > score2:
@@ -245,9 +259,10 @@ if __name__ == "__main__":
     #     start_state = GameState(args.nrows, args.ncols)
 
     players = []
+    
     players.append(MinimaxPruneAgent())
-    players.append(MinimaxHeuristicAgent(4))
-    start_state = GameState(3, 4)
+    players.append(HumanAgent())
+    start_state = GameState(6, 7)
 
 
     play_game(players[0], players[1], start_state)

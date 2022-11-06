@@ -1,3 +1,4 @@
+from mimetypes import init
 import random
 import math
 
@@ -48,13 +49,13 @@ class MinimaxAgent:
 
         for move, state in state.successors():
             self.moves.append(move)
-            util = self.minimax(state)
+            util = self.minimax(state, 4)
             if ((nextp == 1) and (util > best_util)) or ((nextp == -1) and (util < best_util)):
                 best_util, best_move, best_state = util, move, state
         return best_move, best_state
 
 
-    def minimax(self, state):
+    def minimax(self, state, depth):
         """Determine the minimax utility value of the given state.
 
         Args:
@@ -62,28 +63,27 @@ class MinimaxAgent:
 
         Returns: the exact minimax utility value of the state
         """
-        if state.is_full():
+        if ((depth == 0) or state.is_full()):
             return state.utility()
 
         # state has possible successors
         if state.next_player() == 1:
             # current P2 move so minimize successor states
-            return min([self.minimax(succ_state) for move, succ_state in state.successors()])
+            return min([self.minimax(succ_state, depth-1) for move, succ_state in state.successors()])
 
         # currently P1 move so maximize successor states
-        return max([self.minimax(succ_state) for move, succ_state in state.successors()])
+        return max([self.minimax(succ_state, depth-1) for move, succ_state in state.successors()])
 
 
 class MinimaxHeuristicAgent(MinimaxAgent):
     """Artificially intelligent agent that uses depth-limited minimax to select the best move.
-    Hint: Consider what you did for MinimaxAgent. What do you need to change to get what you want?
     """
 
     def __init__(self, depth_limit):
         super().__init__()
         self.depth_limit = depth_limit
 
-    def minimax(self, state):
+    def minimax(self, state, depth):
         """Determine the heuristically estimated minimax utility value of the given state.
 
         The depth data member (set in the constructor) determines the maximum depth of the game
@@ -100,7 +100,7 @@ class MinimaxHeuristicAgent(MinimaxAgent):
 
 
     def minimax_depth(self, state, depth):
-        """This is just a helper method for minimax(). Feel free to use it or not. """
+        """This is just a helper method for minimax()."""
         if depth >= self.depth_limit:
             return self.evaluation(state)
 
@@ -185,7 +185,7 @@ class MinimaxPruneAgent(MinimaxAgent):
     Hint: Consider what you did for MinimaxAgent. What do you need to change to get what you want?
     """
 
-    def minimax(self, state):
+    def minimax(self, state, depth):
         """Determine the minimax utility value of the given state using alpha-beta pruning.
 
         The value should be equal to the one determined by MinimaxAgent.minimax(), but the
@@ -204,7 +204,7 @@ class MinimaxPruneAgent(MinimaxAgent):
         Returns: the minimax utility value of the state
         """
         maxPlayer = True if state.next_player() == -1 else False
-        return self.alphabeta(state, -math.inf, math.inf, maxPlayer, 4)
+        return self.alphabeta(state, -math.inf, math.inf, maxPlayer, depth)
 
 
     def alphabeta(self, state, alpha, beta, maxPlayer, depth):
