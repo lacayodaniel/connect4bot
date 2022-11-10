@@ -3,7 +3,8 @@ import random
 import math
 
 
-BOT_NAME = "INSERT NAME FOR YOUR BOT HERE OR IT WILL THROW AN EXCEPTION"
+BOT_NAME = ""
+DEPTH = 4
 
 
 class RandomAgent:
@@ -49,7 +50,7 @@ class MinimaxAgent:
 
         for move, state in state.successors():
             self.moves.append(move)
-            util = self.minimax(state, 4)
+            util = self.minimax(state, DEPTH)
             if ((nextp == 1) and (util > best_util)) or ((nextp == -1) and (util < best_util)):
                 best_util, best_move, best_state = util, move, state
         return best_move, best_state
