@@ -102,32 +102,42 @@ class GameState:
         forwards = [[c for c in r if c is not None] for r in zip(*grid_forward)]
         grid_back = [b[:i] + r + b[i:] for i, r in enumerate(self.get_rows())]
         backs = [[c for c in r if c is not None] for r in zip(*grid_back)]
+        del forwards[0]
+        del forwards[0]
+        del forwards[0]
+        del forwards[-1]
+        del forwards[-1]
+        del forwards[-1]
+        del backs[0]
+        del backs[0]
+        del backs[0]
+        del backs[-1]
+        del backs[-1]
+        del backs[-1]
         return forwards + backs
 
     """returns (P1 score, P2 score)"""
     def scores(self):
         """Calculate the score for each player.
-
-        Players are awarded points for each streak (horizontal, vertical, or diagonal) of length 3
-        or greater equal to the square of the length (e.g., 4-in-a-row scores 16 points).
         """
         p1_score = 0
         p2_score = 0
-        for run in self.get_rows() + self.get_cols() + self.get_diags():
+        runs = self.get_rows() + self.get_cols() + self.get_diags()
+        for run in runs:
             for elt, length in streaks(run):
                 if (elt == 1):
                     if (length == 2):
                         p1_score += 5
                     elif (length == 3):
                         p1_score += 25
-                    elif (length == 4):
+                    elif (length >= 4):
                         p1_score += 300
-                else: # elt = -1
+                elif (elt == -1): # elt = -1
                     if (length == 2):
                         p2_score += 5
                     elif (length == 3):
                         p2_score += 25
-                    elif (length == 4):
+                    elif (length >= 4):
                         p2_score += 300
                     
         return p1_score, p2_score
