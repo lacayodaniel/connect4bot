@@ -278,10 +278,3 @@ def play_game(player1, player2, state):
     print("Player 2 generated {} states".format(p2_state_count))
     print("")
     return score1, score2
-
-if __name__ == "__main__":
-    players = []
-    players.append(MinimaxPruneAgent())
-    players.append(HumanAgent())
-    start_state = GameState(6, 7)
-    play_game(players[0], players[1], start_state)
