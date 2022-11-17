@@ -237,9 +237,11 @@ def play_game(player1, player2, state):
     run = True
 
     while run:
+        # player switches each pass
         player = player1 if state.next_player() == 1 else player2
 
         state_count_before = GameState.state_count
+        # Max TODO: check if computer player, then use move (col #) to move stepper
         move, state_next = player.get_move(state)
         state_count_after = GameState.state_count
 
@@ -272,9 +274,21 @@ def play_game(player1, player2, state):
     print("")
     return score1, score2
 
+""" The code below is removed when this file is compiled into .mpy.
+    It will be pasted into the 'code.py' file on the RP 2040, with
+    the additional line 'import board_solver'; for space optimization.
+"""
 if __name__ == "__main__":
-    players = []
-    players.append(MinimaxPruneAgent())
-    players.append(HumanAgent())
-    start_state = GameState(6, 7)
-    play_game(players[0], players[1], start_state)
+    """ Michael TODO: add control flow that interfaces with a push button rotary encoder
+        and an LCD screen to display the options below and direct user input appropriately
+    """
+
+    # option 1) create p1 and p2 then start a connect 4 game CvP style
+    p1 = MinimaxPruneAgent()
+    p2 = HumanAgent()
+    start_state = GameState(6, 7) # (row, col)
+    play_game(p1, p2, start_state)
+
+    # option 2) multiplayer
+
+    # option 3) CvP where C is a computer A.I. that has a unique playstyle
