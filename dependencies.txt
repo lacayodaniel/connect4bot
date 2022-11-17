@@ -1,0 +1,12 @@
+import copy -> C:\\Python310\\lib\\copy.py
+import numpy as np -> C:\\Python310\\lib\\site-packages\\numpy\\__init__.py
+import multiprocessing -> C:\\Python310\\lib\\multiprocessing\\__init__.py
+from functools import lru_cache -> C:\\Python310\\lib\\functools.py
+import bz2 -> C:\\Python310\\lib\\bz2.py
+
+
+import types
+import weakref
+from copyreg import dispatch_table
+import functools
+import _collections_abc

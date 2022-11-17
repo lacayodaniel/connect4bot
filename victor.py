@@ -465,6 +465,7 @@ def length(board, pos, d):
 
 
 def center_action(actions):
+    # prioritize a center column from possible actions
     for action in [3, 2, 4, 1, 5, 0, 6]:
         if action in actions:
             return action
