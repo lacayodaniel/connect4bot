@@ -24,15 +24,11 @@ class GameState:
         self._next_p = 1 if (sum(sum(row) for row in self.board) % 2) == 0 else -1
         self._moves_left = sum(sum([1 if x == 0 else 0 for x in row]) for row in self.board)
 
-    def next_player(self):
-        
-        return self._next_p
+    def next_player(self): return self._next_p
 
-    def is_full(self):
-        return self._moves_left <= 0
+    def is_full(self): return self._moves_left <= 0
 
     def _create_successor(self, col):
-
         successor_board = [ list(row) for row in self.board ]
         row = 0
         while (successor_board[row][col] != 0):
@@ -45,18 +41,15 @@ class GameState:
         return successor
 
     def successors(self):
-        
         move_states = []
         for col in range(self.num_cols):
             if self.board[self.num_rows-1][col] == 0:
                 move_states.append((col, self._create_successor(col)))
         return move_states
 
-    def get_rows(self):
-        return [[c for c in r] for r in self.board]
+    def get_rows(self): return [[c for c in r] for r in self.board]
 
-    def get_cols(self):
-        return list(zip(*self.board))
+    def get_cols(self): return list(zip(*self.board))
 
     def get_diags(self):
 
@@ -278,3 +271,10 @@ def play_game(player1, player2, state):
     print("Player 2 generated {} states".format(p2_state_count))
     print("")
     return score1, score2
+
+if __name__ == "__main__":
+    players = []
+    players.append(MinimaxPruneAgent())
+    players.append(HumanAgent())
+    start_state = GameState(6, 7)
+    play_game(players[0], players[1], start_state)
