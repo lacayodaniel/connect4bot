@@ -113,18 +113,6 @@ def print_board(board):
     s += "\n"
     print(s)
 
-# class HumanAgent:
-#     def get_move(self, state, depth=None):
-#         move__state = dict(successors(state))
-#         prompt = "Kindly enter your move {}: ".format(sorted(move__state.keys()))
-#         move = None
-#         while move not in move__state:
-#             try:
-#                 move = int(input(prompt))
-#             except ValueError:
-#                 continue
-#         return move, move__state[move]
-
 def get_human_move(state):
     move__state = dict(successors(state))
     prompt = "Kindly enter your move {}: ".format(sorted(move__state.keys()))
@@ -135,45 +123,6 @@ def get_human_move(state):
         except ValueError:
             continue
     return move, move__state[move]
-
-# class MinimaxAgent:
-#     """Artificially intelligent agent that uses minimax to optimally select the best move."""
-#     def __init__(self):
-#         self.moves = []
-    
-#     def get_move(self, state):
-#         """Select the best available move, based on minimax value."""
-#         nextp = next_player(state) # says who's move it is for the state
-#         best_util = NINF if nextp == 1 else INF
-#         best_move = None
-#         best_state = None
-
-#         for move, state in successors(state):
-#             self.moves.append(move)
-#             util = self.minimax(state, DEPTH)
-#             if ((nextp == 1) and (util > best_util)) or ((nextp == -1) and (util < best_util)):
-#                 best_util, best_move, best_state = util, move, state
-#         return best_move, best_state
-
-
-#     def minimax(self, state, depth):
-#         """Determine the minimax utility value of the given state.
-
-#         Args:
-#             state: a connect383.GameState object representing the current board
-
-#         Returns: the exact minimax utility value of the state
-#         """
-#         if ((depth == 0) or is_full(state)):
-#             return utility(state)
-
-#         # state has possible successors
-#         if next_player(state) == 1:
-#             # current P2 move so minimize successor states
-#             return min([self.minimax(succ_state, depth-1) for move, succ_state in successors(state)])
-
-#         # currently P1 move so maximize successor states
-#         return max([self.minimax(succ_state, depth-1) for move, succ_state in successors(state)])
 
 def get_move(state):
     """Select the best available move, based on minimax value."""
@@ -217,49 +166,6 @@ def alphabeta(state, alpha, beta, maxPlayer, depth):
                     break
                 beta = min(beta,val)
             return val
-
-# class MinimaxPruneAgent(MinimaxAgent):
-#     """Smarter computer agent that uses minimax with alpha-beta pruning to select the best move.
-#     Hint: Consider what you did for MinimaxAgent. What do you need to change to get what you want?
-#     """
-
-#     def minimax(self, state, depth):
-#         """Determine the minimax utility value of the given state using alpha-beta pruning.
-
-#         N.B.: When exploring the game tree and expanding nodes, you must consider the child nodes
-#         in the order that they are returned by GameState.successors().  That is, you cannot prune
-#         the state reached by moving to column 4 before you've explored the state reached by a move
-#         to to column 1.
-
-#         Returns: the minimax utility value of the state
-#         """
-#         maxPlayer = True if next_player(state) == -1 else False
-#         return self.alphabeta(state, NINF, INF, maxPlayer, depth)
-
-
-#     def alphabeta(self, state, alpha, beta, maxPlayer, depth):
-#         if ((depth == 0) or is_full(state)):
-#             return utility(state)
-
-#         # given, state has possible successors
-#         if maxPlayer:
-#             # currently P1's move; maximize successor states
-#             val = NINF
-#             for move, succ_state in successors(state):
-#                 val = max(val, self.alphabeta(succ_state, alpha, beta, False, depth-1))
-#                 if val >= beta:
-#                     break
-#                 alpha = max(alpha,val)
-#             return val
-#         else:
-#             # currently P2's move; minimize successor states
-#             val = INF
-#             for move, succ_state in successors(state):
-#                 val = min(val, self.alphabeta(succ_state, alpha, beta, True, depth-1))
-#                 if val <= alpha:
-#                     break
-#                 beta = min(beta,val)
-#             return val
 
 def streaks(lst):
     rets = [] 
