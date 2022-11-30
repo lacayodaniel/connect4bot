@@ -140,7 +140,7 @@ def get_move(state):
     return best_move, best_state
 
 def prune_minimax(state, depth):
-    maxPlayer = True if next_player(state) == -1 else False
+    maxPlayer = False if next_player(state) == -1 else True
     return alphabeta(state, NINF, INF, maxPlayer, depth)
 
 def alphabeta(state, alpha, beta, maxPlayer, depth):
