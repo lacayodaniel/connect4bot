@@ -1,4 +1,5 @@
 import sys
+import time
 
 INF = sys.maxsize - 1
 NINF = -INF
@@ -289,7 +290,9 @@ def play_game(state):
         
         if (nextp):
             # computer move
+            a = time.time()
             move, state_next = get_move(state)
+            print(time.time()-a, "seconds")
         else:
             move, state_next = get_human_move(state)
 

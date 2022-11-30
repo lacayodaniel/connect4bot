@@ -1,4 +1,5 @@
 import sys
+import time
 
 INF = sys.maxsize - 1
 NINF = -INF
@@ -240,7 +241,9 @@ def play_game(player1, player2, state):
         player = player1 if state.next_player() == 1 else player2
 
         state_count_before = GameState.state_count
+        a = time.time()
         move, state_next = player.get_move(state)
+        print(time.time()-a,"seconds")
         state_count_after = GameState.state_count
 
         states_created = state_count_after - state_count_before
