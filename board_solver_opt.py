@@ -1,5 +1,6 @@
 import sys
 import time
+import random
 
 INF = sys.maxsize - 1
 NINF = -INF
@@ -12,7 +13,7 @@ NEXTP = 1
 
 state_count = 0  # bookkeeping to help track how efficient agents' search methods are running
 
-def init_board(): return tuple([ tuple([0]*COLS) ]*ROWS)
+def init_board(): return tuple([ tuple([0]*COLS) ]*ROWS) # np.zeros((ROWS,COLS), dtype=np.int8)
 
 def init_board_from_test(b):
     # very important to note this asumes b is [6][7]int array
@@ -24,13 +25,16 @@ def init_board_from_test(b):
 
 def next_player(board): return 1 if (sum(sum(row) for row in board) % 2) == 0 else -1 # 1 for Player 1, -1 for Player 2
 
-def is_full(board): return moves_left(board) <= 0
+def is_full(board): 
+    mvlt = moves_left(board)
+    return mvlt <= 0
 
 def moves_left(board): return sum(sum([1 if x == 0 else 0 for x in row]) for row in board)
 
 def _create_successor(board, col):
     global state_count
     successor_board = [ list(row) for row in board ]
+    # successor_board = np.copy(board)
     row = 0
     while (successor_board[row][col] != 0):
         row += 1
@@ -42,7 +46,7 @@ def _create_successor(board, col):
 
 def successors(board):
     move_states = [] # [(col, successor_board)]
-    for col in range(COLS):
+    for col in [3, 2, 4, 1, 5, 0, 6]:
         if board[ROWS-1][col] == 0:
             move_states.append((col, _create_successor(board,col)))
     return move_states
@@ -72,9 +76,29 @@ def get_diags(board):
     del backs[-1]
     return forwards + backs
 
+# np.copy is not supported on ulab.numpy
+# def fast_get_rows(board): return np.copy(board)
+
+# def fast_get_cols(board): return np.transpose(np.copy(board))
+
+# def fast_get_diags(board):
+#     forward = [np.diag(board,k=i) for i in range(-2,4)]
+#     backward = [np.diag(np.fliplr(board),k=i) for i in range(-2,4)]
+#     return (forward + backward).flatten()
+
+def has_win(board):
+    runs = get_rows(board) + get_cols(board) + get_diags(board)
+    for run in runs:
+        for elt, l in streaks(run):
+            if(l == 4 and (elt == 1 or elt == -1)):
+                return True
+    return False
+
 def scores(board):
     p1_score = 0
     p2_score = 0
+    # padded_cols = np.concatenate((np.zeros((7,1), dtype=np.int8), fast_get_cols(board)), axis=1)
+    # runs = np.concatenate((padded_cols, fast_get_rows(board))) #+ fast_get_diags(board)
     runs = get_rows(board) + get_cols(board) + get_diags(board)
     for run in runs:
         for elt, length in streaks(run):
@@ -84,14 +108,14 @@ def scores(board):
                 elif (length == 3):
                     p1_score += 25
                 elif (length >= 4):
-                    p1_score += 300
+                    p1_score += 1000
             elif (elt == -1): # elt = -1
                 if (length == 2):
                     p2_score += 5
                 elif (length == 3):
                     p2_score += 25
                 elif (length >= 4):
-                    p2_score += 300
+                    p2_score += 1000
                 
     return p1_score, p2_score
 
@@ -144,7 +168,7 @@ def prune_minimax(state, depth):
     return alphabeta(state, NINF, INF, maxPlayer, depth)
 
 def alphabeta(state, alpha, beta, maxPlayer, depth):
-        if ((depth == 0) or is_full(state)):
+        if ((depth == 0) or is_full(state) or has_win(state)):
             return utility(state)
 
         # given, state has possible successors
@@ -218,7 +242,7 @@ def play_game(state):
 
         turn += 1
         state = state_next
-        if is_full(state):
+        if (is_full(state) or has_win(state)):
             run = False
         nextp = 1 - nextp
 
@@ -235,7 +259,5 @@ def play_game(state):
     return score1, score2
 
 if __name__ == "__main__":
-    players = []
     start_state = init_board()
-    print_board(start_state)
     play_game(start_state)
