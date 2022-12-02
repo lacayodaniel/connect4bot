@@ -31,6 +31,40 @@ def is_full(board):
 
 def moves_left(board): return sum(sum([1 if x == 0 else 0 for x in row]) for row in board)
 
+# def get_position_mask_bitmap(board,player):
+#     """
+#     Convert the game board numpy representation
+#     to a bitmap (encoded as integer). Store a bitmap
+#     for the positions of player his tokens and a
+#     bitmap for occupied cells. The order of
+#     the bits is the following (0-bit is least significant):
+#     .  .  .  .  .  .  .
+#     5 12 19 26 33 40 47
+#     4 11 18 25 32 39 46
+#     3 10 17 24 31 38 45
+#     2  9 16 23 30 37 44
+#     1  8 15 22 29 36 43
+#     0  7 14 21 28 35 42
+
+#     Args:
+#         board (numpy array)
+#         player (int (1 or 2))
+
+#     Return:
+#         position (int): token bitmap
+#         mask (int):  occupied cell bitmap
+#     """
+#     position, mask = '', ''
+#     for j in range(6, -1, -1):
+#         mask += '0'
+#         position += '0'
+#         for i in range(0, 6):
+#             mask += ['0', '1'][board[i][j] != 0]
+#             position += ['0', '1'][board[i][j] == player]
+#     return position+mask
+
+
+
 def _create_successor(board, col):
     global state_count
     successor_board = [ list(row) for row in board ]
@@ -42,6 +76,7 @@ def _create_successor(board, col):
         raise Exception("Illegal successor: {}, {}".format(col, board))
     successor_board[row][col] = next_player(board)
     state_count += 1
+    # get_position_mask_bitmap(successor_board,next_player(board))
     return successor_board
 
 def successors(board):
