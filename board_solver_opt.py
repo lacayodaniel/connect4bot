@@ -5,10 +5,11 @@ import random
 INF = sys.maxsize - 1
 NINF = -INF
 BOT_NAME = ""
-DEPTH = 2
+DEPTH = 4
 ROWS = 6
 COLS = 7
 NEXTP = 1
+MOVES_LEFT = 42
 
 
 state_count = 0  # bookkeeping to help track how efficient agents' search methods are running
@@ -29,7 +30,7 @@ def is_full(board):
     mvlt = moves_left(board)
     return mvlt <= 0
 
-def moves_left(board): return sum(sum([1 if x == 0 else 0 for x in row]) for row in board)
+def moves_left(board): return MOVES_LEFT #sum(sum([1 if x == 0 else 0 for x in row]) for row in board)
 
 def _create_successor(board, col):
     global state_count
@@ -148,6 +149,32 @@ def get_human_move(state):
             continue
     return move, move__state[move]
 
+def get_min_max_move(state):
+    moves = []
+    nextp = next_player(state) # says who's move it is for the state
+    best_util = NINF if nextp == 1 else INF
+    best_move = None
+    best_state = None
+
+    for move, state in successors(state):
+        moves.append(move)
+        util = minimax(state, DEPTH)
+        if ((nextp == 1) and (util > best_util)) or ((nextp == -1) and (util < best_util)):
+            best_util, best_move, best_state = util, move, state
+    return best_move, best_state
+
+def minimax(state, depth):
+    if ((depth == 0) or is_full(state) or has_win(state)):
+        return utility(state)
+
+        # state has possible successors
+    if next_player(state) == -1:
+        # current P2 move so minimize successor states
+        return min([minimax(succ_state, depth-1) for move, succ_state in successors(state)])
+
+    # currently P1 move so maximize successor states
+    return max([minimax(succ_state, depth-1) for move, succ_state in successors(state)])
+
 def get_move(state):
     """Select the best available move, based on minimax value."""
     moves = []
@@ -206,7 +233,9 @@ def streaks(lst):
     return rets
 
 def play_game(state):
+    global MOVES_LEFT
     print_board(state)
+    
 
     turn = 0
     p1_state_count, p2_state_count = 0, 0
@@ -215,7 +244,7 @@ def play_game(state):
 
     while run:
         # player = player1 if next_player(state) == 1 else player2
-
+        print(moves_left(state))
         state_count_before = state_count
         
         if (nextp):
@@ -225,7 +254,11 @@ def play_game(state):
             print(time.time()-a, "seconds")
         else:
             move, state_next = get_human_move(state)
+            # a = time.time()
+            # move, state_next = get_min_max_move(state)
+            # print(time.time()-a, "seconds")
 
+        MOVES_LEFT -= 1
         state_count_after = state_count
         states_created = state_count_after - state_count_before
 
