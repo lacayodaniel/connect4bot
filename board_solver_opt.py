@@ -5,7 +5,7 @@ import random
 INF = sys.maxsize - 1
 NINF = -INF
 BOT_NAME = ""
-DEPTH = 4
+DEPTH = 2
 ROWS = 6
 COLS = 7
 NEXTP = 1
@@ -267,7 +267,7 @@ def streaks(lst):
     rets.append((prev, curr_len))
     return rets
 
-def play_game(state):
+def play_game_test(state):
     global MOVES_LEFT
     print_board(state)
     
@@ -326,6 +326,45 @@ def play_game(state):
     print("")
     return score1, score2
 
+def play_game(state):
+    global MOVES_LEFT
+    print_board(state)
+
+    turn = 0
+    run = True
+    nextp = next_player(state)
+
+    while run:
+        # player = player1 if next_player(state) == 1 else player2
+        
+        if (nextp):
+            # computer move
+            move, state_next = get_move(state)
+        else:
+            move, state_next = get_human_move(state)
+
+        MOVES_LEFT -= 1
+
+        print("Turn {}:".format(turn))
+        print("Player {} moves to column {}".format(1 if nextp else 2, move))
+        print_board(state_next)
+
+        turn += 1
+        state = state_next
+        if (is_full(state) or has_win(state)):
+            run = False
+        nextp = 1 - nextp
+
+    score1, score2 = scores(state)
+    if score1 > score2:
+        print("Player 1 wins!")
+    elif score1 < score2:
+        print("Player 2 wins!")
+    else:
+        print("It's a tie.")
+
 if __name__ == "__main__":
+    # SET UP STUFF BEFORE STARTING GAME
+
     start_state = init_board()
     play_game(start_state)
