@@ -9,7 +9,7 @@ DEPTH = 2
 ROWS = 6
 COLS = 7
 NEXTP = 1
-MOVES_LEFT = 42
+# MOVES_LEFT = 42
 
 
 state_count = 0  # bookkeeping to help track how efficient agents' search methods are running
@@ -30,7 +30,7 @@ def is_full(board):
     mvlt = moves_left(board)
     return mvlt <= 0
 
-def moves_left(board): return MOVES_LEFT #sum(sum([1 if x == 0 else 0 for x in row]) for row in board)
+def moves_left(board): return sum(sum([1 if x == 0 else 0 for x in row]) for row in board)
 
 # def get_position_mask_bitmap(board,player):
 #     """
@@ -184,6 +184,10 @@ def get_human_move(state):
             continue
     return move, move__state[move]
 
+def update_board_with_move(current_state, move):
+    next_state = dict(successors(current_state))
+    return next_state[move]
+
 def get_min_max_move(state):
     moves = []
     nextp = next_player(state) # says who's move it is for the state
@@ -268,7 +272,7 @@ def streaks(lst):
     return rets
 
 def play_game_test(state):
-    global MOVES_LEFT
+    # global MOVES_LEFT
     print_board(state)
     
 
@@ -293,7 +297,7 @@ def play_game_test(state):
             # move, state_next = get_min_max_move(state)
             # print(time.time()-a, "seconds")
 
-        MOVES_LEFT -= 1
+        # MOVES_LEFT -= 1
         state_count_after = state_count
         states_created = state_count_after - state_count_before
 
@@ -327,7 +331,7 @@ def play_game_test(state):
     return score1, score2
 
 def play_game(state):
-    global MOVES_LEFT
+    # global MOVES_LEFT
     print_board(state)
 
     turn = 0
@@ -336,14 +340,21 @@ def play_game(state):
 
     while run:
         # player = player1 if next_player(state) == 1 else player2
-        
+
         if (nextp):
             # computer move
             move, state_next = get_move(state)
-        else:
-            move, state_next = get_human_move(state)
+            # MAX max Max Maxwell maxwell  your code here
+            # move is an int with range [0-6] inclusive, corresponding to a column
 
-        MOVES_LEFT -= 1
+        else:
+            move, state_next = get_human_move(state) # delete line when implemented
+            # max your code here
+            move = wait_for_move() # column number human chose [0-6]
+            state_next = update_board_with_move(state, move) # keep line
+            
+
+        # MOVES_LEFT -= 1
 
         print("Turn {}:".format(turn))
         print("Player {} moves to column {}".format(1 if nextp else 2, move))
